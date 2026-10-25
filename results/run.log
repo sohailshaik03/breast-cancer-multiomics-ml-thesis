@@ -1,0 +1,83 @@
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/sklearn/svm/_base.py:236: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
+/Users/sohailshaik/Desktop/vr/pj/BRCA.py:124: FutureWarning:
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `x` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.barplot(x=["SVM"], y=[svm_accuracy], palette="viridis")
+/Users/sohailshaik/Desktop/vr/pj/BRCA.py:155: FutureWarning:
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `x` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.barplot(x=['Gradient Boosting'], y=[gb_accuracy], palette='viridis')
+Random Forest:
+Accuracy: 0.900709219858156
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.91      0.99      0.95       125
+           1       0.75      0.19      0.30        16
+
+    accuracy                           0.90       141
+   macro avg       0.83      0.59      0.62       141
+weighted avg       0.89      0.90      0.87       141
+
+Confusion Matrix:
+Neural Network:
+Accuracy: 0.8936170212765957
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.91      0.98      0.94       125
+           1       0.57      0.25      0.35        16
+
+    accuracy                           0.89       141
+   macro avg       0.74      0.61      0.64       141
+weighted avg       0.87      0.89      0.87       141
+
+Confusion Matrix:
+Support Vector Machine (SVM):
+Accuracy: 0.8439716312056738
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.91      0.92      0.91       125
+           1       0.29      0.25      0.27        16
+
+    accuracy                           0.84       141
+   macro avg       0.60      0.58      0.59       141
+weighted avg       0.84      0.84      0.84       141
+
+Confusion Matrix:
+Gradient Boosting:
+Accuracy: 0.8936170212765957
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.90      0.98      0.94       125
+           1       0.60      0.19      0.29        16
+
+    accuracy                           0.89       141
+   macro avg       0.75      0.59      0.61       141
+weighted avg       0.87      0.89      0.87       141
+
+Confusion Matrix:
+Gradient Boosting:
+Accuracy: 0.8936170212765957
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.90      0.98      0.94       125
+           1       0.60      0.19      0.29        16
+
+    accuracy                           0.89       141
+   macro avg       0.75      0.59      0.61       141
+weighted avg       0.87      0.89      0.87       141
+
+Confusion Matrix:
+The best performing model is Random Forest with an accuracy of 0.900709219858156.
+Random Forest ROC Curve:
+Neural Network ROC Curve:
+Support Vector Machine (SVM) ROC Curve:
+Gradient Boosting ROC Curve:
+Captured 14 plot displays; saved 9 figures and metrics.
