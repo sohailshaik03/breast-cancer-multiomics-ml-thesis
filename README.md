@@ -174,20 +174,22 @@ exploratory research only.
 
 ## Run the analysis
 
-Use Python 3.10 or newer. From the repository root:
+Use Python 3.10 or newer:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
-python BRCA.py
+python /path/to/project/BRCA.py
 ```
 
 On Windows, activate the environment with `.venv\Scripts\activate` instead.
-The script reads `data.csv` from the current working directory, writes
-`results/model_metrics.csv` and PNG plots into `results/`, and prints
-classification reports to the terminal. The committed results were generated
-with the same command.
+The script reads `data.csv` and writes `results/model_metrics.csv` and the PNG
+plots relative to the script's location, regardless of the current working
+directory. Each run replaces the prior metrics and figures. It also prints
+classification reports to the terminal. The results above were regenerated
+with this command and correspond to the fixed stratified 80/20 split (122
+class-0 and 19 class-1 test samples).
 
 ## Thesis reference
 

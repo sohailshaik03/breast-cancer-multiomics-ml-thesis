@@ -17,7 +17,8 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 
-OUTPUT_DIR = Path("results")
+PROJECT_DIR = Path(__file__).resolve().parent
+OUTPUT_DIR = PROJECT_DIR / "results"
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 
@@ -27,7 +28,7 @@ def save_plot(filename):
     plt.close()
 
 
-data = pd.read_csv("data.csv").dropna()
+data = pd.read_csv(PROJECT_DIR / "data.csv").dropna()
 X = data.drop("vital.status", axis=1)
 y = data["vital.status"]
 
