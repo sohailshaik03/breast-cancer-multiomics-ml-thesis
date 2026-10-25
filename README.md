@@ -95,7 +95,7 @@ F1-score for class 1 are particularly important.
 
 | Model | Accuracy | Class-1 precision | Class-1 recall | Class-1 F1 | ROC-AUC |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Random Forest | 0.8936 | 1.0000 | 0.2105 | 0.3478 | 0.6564 |
+| Random Forest | 0.9007 | 1.0000 | 0.2105 | 0.3478 | 0.6564 |
 | Neural Network | 0.8794 | 0.6000 | 0.3158 | 0.4138 | 0.5846 |
 | SVM | 0.8298 | 0.3684 | 0.3684 | 0.3684 | 0.6700 |
 | Gradient Boosting | 0.8865 | 0.6364 | 0.3684 | 0.4667 | 0.6562 |
