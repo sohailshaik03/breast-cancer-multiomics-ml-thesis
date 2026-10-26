@@ -1,187 +1,96 @@
-# Breast Cancer Multi-Omics Survival Classification
+# Breast Cancer Multi-Omics Outcome Classification
 
-An MSc Bioinformatics thesis project.
+MSc Bioinformatics thesis project, University of West London (2024), with a leakage-corrected re-analysis (2026).
 
-> **Research and educational use only.** This is a retrospective machine-learning
-> exercise on a supplied dataset. It is not a diagnostic or prognostic medical
-> device and must not be used to make decisions about patient care.
+> **Research and educational use only.** This is a retrospective machine-learning exercise on a public dataset. It is not a diagnostic or prognostic medical device.
 
-## Project overview
+## Summary
 
-The thesis, *Development of a Machine Learning-Based Diagnostic Tool for Early
-Detection of Breast Cancer using Multi-Omics Data Integration*, investigates
-whether molecular features can help classify breast-cancer patient outcomes.
-The supplied analysis file, however, predicts the `vital.status` outcome (0/1);
-it does **not** classify cancer versus non-cancer or establish early detection.
-Keep this distinction in mind when interpreting the thesis title and the
-results.
+Four supervised classifiers were compared for predicting recorded patient vital status from 1,936 molecular features in 705 breast cancer samples. **Random Forest was the best-performing model by accuracy** in both the original thesis (90.07%) and the corrected re-analysis (89.36%).
 
-The repository contains the submitted thesis, its supplied tabular dataset, a
-Python implementation of four classifiers, and saved result tables, a run log,
-and figures. `BRCA.py` is the executable analysis; the thesis describes a
-broader research plan and findings than this script implements.
+The re-analysis also showed that high accuracy hides weak performance on the rare outcome. Only 13% of patients have label 1, and the models found 21–37% of them.
 
 ## Repository contents
 
 | Path | Description |
 | --- | --- |
-| `thesis.docx` | Submitted MSc thesis document |
-| `data.csv` | Supplied feature matrix and `vital.status` labels |
-| `BRCA.py` | Preprocessing, train/test split, model fitting, evaluation and figure generation |
+| `BRCA.py` | Current, leakage-corrected analysis (2026) |
+| `results/` | Metrics, run log and figures from `BRCA.py` |
+| `original-2024/BRCA_2024.py` | Original thesis script, as run on Kaggle in 2024 |
+| `original-2024/results/` | Metrics, run log and figures from the original script |
+| `data.csv` | Feature matrix and `vital.status` labels |
+| `thesis.docx` | Thesis document, revised in 2026 to report the corrected re-analysis |
 | `requirements.txt` | Python dependencies |
-| `results/model_metrics.csv` | Reproduced evaluation metrics for each classifier |
-| `results/run.log` | Console output from the saved-results run |
-| `results/model_accuracy_comparison.png` | Accuracy comparison across classifiers |
-| `results/*_confusion_matrix.png` | Per-classifier confusion matrices |
-| `results/*_roc_curve.png` | Per-classifier ROC curves |
 
 ## Dataset
 
-The supplied CSV contains **705 samples**, **1,936 feature columns**, and one
-target column (`vital.status`), for 1,937 columns total. The target has two
-values:
+A public TCGA-derived breast cancer dataset distributed on Kaggle (`brca-multiomics-tcga`). It has 705 samples, 1,936 features and one binary outcome, `vital.status`.
 
-| `vital.status` | Samples | Proportion |
+| `vital.status` | Samples | Share |
 | --- | ---: | ---: |
 | 0 | 611 | 86.7% |
 | 1 | 94 | 13.3% |
 
-The feature column prefixes in this file are `rs_` (604 features), `cn_` (860),
-`mu_` (249), and `pp_` (223). The CSV does not include a data dictionary that
-defines these prefixes or identifies the exact source cohort/accession. The
-thesis discusses public repositories including TCGA and GEO, but the supplied
-files alone do not establish a precise data provenance or sample-level
-permissions. Confirm provenance, reuse terms, and any disclosure/privacy
-requirements before redistributing the dataset.
+Features fall into four blocks by prefix: `rs_` (604), `cn_` (860), `mu_` (249) and `pp_` (223). The file has no data dictionary, so the blocks are not formally defined here.
 
-The dataset has no blank cells in the supplied version. The script retains a
-`dropna()` step as a basic safeguard, then treats every column except
-`vital.status` as a model feature.
+## Original thesis results and the 2026 correction
 
-## Analysis workflow
+### What changed
 
-`BRCA.py` performs the following steps:
+The original 2024 script made two preprocessing choices that are now known to bias evaluation.
 
-1. Loads `data.csv` and removes rows with missing values.
-2. Separates all remaining columns into predictors and the `vital.status`
-   target.
-3. Scales the complete feature matrix with `StandardScaler`, then creates a
-   shuffled 80/20 train/test split with random seed 42. The split is not
-   stratified; this run has 564 training samples and 141 test samples (125
-   class-0 and 16 class-1).
-4. Fits four classifiers with the settings shown in `BRCA.py`:
-   - Random Forest (100 trees)
-   - Neural Network / MLP (one hidden layer with 100 units; maximum 500
-     iterations)
-   - Linear Support Vector Machine with probability estimates enabled
-   - Gradient Boosting (100 estimators)
+1. **Scaling before splitting.** `StandardScaler` was fitted on all 705 samples before the train/test split. The test samples therefore influenced the preprocessing applied to the training data. This is data leakage.
+2. **No stratification.** The split did not preserve the class balance. The test set happened to contain 16 positive cases instead of the 19 a stratified split gives.
 
-   The script fits and evaluates Gradient Boosting twice; the second fit is
-   used for the saved metrics and figures.
-5. Prints accuracy, per-class precision/recall/F1, and confusion matrices;
-   calculates ROC-AUC from predicted probabilities.
-6. The checked-in metric table and PNG figures were saved during this run by a
-   temporary output-capture wrapper; the source script itself only displays
-   plots and does not write these files.
+The corrected `BRCA.py` uses a stratified split and fits the scaler on the training data only. Models, settings and the random seed are otherwise unchanged.
 
-The positive class used for class-1 metrics and ROC analysis is
-`vital.status = 1`. The script does not perform the thesis-described LASSO or
-statistical feature selection, hyperparameter search, cross-validation,
-independent cohort validation, or a separate multi-omics integration
-algorithm. The four feature prefixes are simply passed together as model
-inputs.
+### Side-by-side results
 
-## Reproduced results
+Test set of 141 samples in both runs.
 
-The following table summarizes this run. Accuracy alone is not a sufficient
-measure here: the dataset is imbalanced, so the recall and F1-score for class 1
-are particularly important.
+| Model | Accuracy 2024 | Accuracy 2026 | Class-1 recall 2024 | Class-1 recall 2026 | ROC-AUC 2024 | ROC-AUC 2026 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| **Random Forest** | **0.9007** | **0.8936** | 0.1875 | 0.2105 | 0.4965 | 0.6564 |
+| Neural network (MLP) | 0.8936 | 0.8794 | 0.2500 | 0.3158 | 0.5685 | 0.5846 |
+| Linear SVM | 0.8440 | 0.8298 | 0.2500 | 0.3684 | 0.5935 | 0.6700 |
+| Gradient Boosting | 0.8936 | 0.8865 | 0.1875 | 0.3684 | 0.5620 | 0.6562 |
+
+Random Forest has the highest accuracy in both runs. The small drop in accuracy after the correction is expected once leakage is removed.
+
+### How to read these numbers
+
+Accuracy is misleading here. In the 2024 test set, 125 of 141 patients were class 0. A model that always predicts class 0 would score 88.65% and find no class-1 patients. Random Forest scored 90.07% but found 3 of the 16 class-1 patients.
+
+The more informative measures are class-1 recall, F1-score and ROC-AUC, all reported in `results/model_metrics.csv`.
+
+## Current results in full (2026)
 
 | Model | Accuracy | Class-1 precision | Class-1 recall | Class-1 F1 | ROC-AUC |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Random Forest | 0.9007 | 0.7500 | 0.1875 | 0.3000 | 0.4965 |
-| Neural Network | 0.8936 | 0.5714 | 0.2500 | 0.3478 | 0.5685 |
-| SVM | 0.8440 | 0.2857 | 0.2500 | 0.2667 | 0.5935 |
-| Gradient Boosting | 0.8936 | 0.6000 | 0.1875 | 0.2857 | 0.5620 |
+| Random Forest | 0.8936 | 1.0000 | 0.2105 | 0.3478 | 0.6564 |
+| Neural network (MLP) | 0.8794 | 0.6000 | 0.3158 | 0.4138 | 0.5846 |
+| Linear SVM | 0.8298 | 0.3684 | 0.3684 | 0.3684 | 0.6700 |
+| Gradient Boosting | 0.8865 | 0.6364 | 0.3684 | 0.4667 | 0.6562 |
 
-Random Forest has the highest accuracy, Neural Network the highest class-1
-F1-score, and SVM the highest ROC-AUC on this run. All models miss most
-class-1 cases: recall ranges from 0.19 to 0.25. These single-split results are
-exploratory and do not demonstrate clinical utility or reliable generalization.
+## Research question and data: a known mismatch
 
-### Accuracy comparison
+The thesis title refers to **early detection** of breast cancer. Detection means separating people with cancer from people without it, which needs healthy or normal-tissue controls.
 
-![Model accuracy comparison](results/model_accuracy_comparison.png)
+This dataset contains only breast cancer patients, labelled by vital status. It can answer a **prognosis** question (which patients have a poorer outcome), not a detection question. The results above should be read as outcome classification.
 
-### Confusion matrices
+A detection study would use, for example, TCGA-BRCA tumour samples with matched normal tissue, or a GEO cohort with healthy controls. A stronger prognosis study would use survival methods that account for follow-up time.
 
-| Random Forest | Neural Network |
-| --- | --- |
-| ![Random Forest confusion matrix](results/random_forest_confusion_matrix.png) | ![Neural Network confusion matrix](results/neural_network_confusion_matrix.png) |
+## Limitations
 
-| SVM | Gradient Boosting |
-| --- | --- |
-| ![SVM confusion matrix](results/svm_confusion_matrix.png) | ![Gradient Boosting confusion matrix](results/gradient_boosting_confusion_matrix.png) |
+- **Single split.** Results come from one train/test split and may vary with a different split.
+- **High dimensionality.** There are 1,936 features for 705 samples, with no feature selection inside cross-validation, so overfitting is likely.
+- **Class imbalance.** No resampling, class weighting or threshold tuning was used.
+- **Outcome definition.** Vital status ignores follow-up time. Patients alive at last contact may still have an event later.
+- **No external validation.** No independent cohort, calibration analysis or clinical evaluation was performed.
 
-### ROC curves
+## Reproduce
 
-| Random Forest | Neural Network |
-| --- | --- |
-| ![Random Forest ROC curve](results/random_forest_roc_curve.png) | ![Neural Network ROC curve](results/neural_network_roc_curve.png) |
-
-| SVM | Gradient Boosting |
-| --- | --- |
-| ![SVM ROC curve](results/svm_roc_curve.png) | ![Gradient Boosting ROC curve](results/gradient_boosting_roc_curve.png) |
-
-## Results stated in the thesis
-
-The thesis reports these test accuracies: Random Forest **90.07%**, Neural
-Network **89.36%**, SVM **84.39%**, and Gradient Boosting **89.36%**. It also
-describes ROC-AUC values of approximately 0.50 (Random Forest), 0.57 (Neural
-Network), 0.59 (SVM), and 0.56 (Gradient Boosting). Those are thesis-reported
-values, not the current run's outputs.
-
-The current script scales before splitting and does not stratify, so test-set
-information leaks into preprocessing and the test class balance varies from a
-stratified split. The current run's results should not be treated as an
-independent or clinical validation. See `results/model_metrics.csv` and
-`results/run.log` for the saved outputs.
-
-## Interpretation and limitations
-
-- **Outcome and title differ:** the executable predicts the recorded
-  `vital.status`, not early cancer diagnosis. This is an outcome-classification
-  analysis, not evidence of a screening or diagnostic tool.
-- **Class imbalance:** only about 13% of records have label 1. Accuracy is
-  dominated by the majority class; the low class-1 recall means many positive
-  cases are missed.
-- **High dimensionality:** 1,936 input features are evaluated with 705
-  samples. This creates substantial overfitting risk, especially without
-  nested validation or feature selection performed entirely inside each
-  training fold.
-- **Preprocessing leakage:** `StandardScaler` is fitted before the train/test
-  split, so information from the held-out test data influences preprocessing.
-- **Unstratified split:** the test set contains only 16 of the 94 class-1
-  samples in this run; the reported metrics may be sensitive to the split.
-- **Limited validation:** the reported evaluation uses one random hold-out
-  split. There is no cross-validation or independent external cohort in the
-  executable analysis.
-- **No feature selection in code:** although the thesis discusses biomarkers
-  and selection methods, `BRCA.py` does not implement the statistical tests,
-  LASSO selection, or an interpretable feature-importance analysis. Biomarker
-  and pathway claims in the thesis are not independently reproduced by this
-  script.
-- **No clinical validation:** no calibration assessment, decision analysis,
-  prospective validation, or assessment of clinical consequences is included.
-- **Data provenance:** source accession, cohort details, and a feature
-  dictionary are not present alongside the supplied CSV.
-
-These limitations mean that the reported performance should be treated as
-exploratory research only.
-
-## Run the analysis
-
-Use Python 3.10 or newer and install the dependencies:
+Python 3.10 or newer.
 
 ```bash
 python -m venv .venv
@@ -190,19 +99,10 @@ python -m pip install -r requirements.txt
 python BRCA.py
 ```
 
-On Windows, activate the environment with `.venv\Scripts\activate` instead.
-As supplied, `BRCA.py` reads from the Kaggle path
-`/kaggle/input/brca-multiomics-tcga/data.csv`, not from the repository's
-`data.csv`. In this local run, a temporary in-memory wrapper redirected that
-input to the included CSV, captured the displayed figures, and saved the
-metrics and terminal output under `results/`; no Python source file was
-changed. The wrapper was not checked in, so direct execution outside Kaggle
-requires making the data available at the expected path. The script itself
-does not save result files.
+`BRCA.py` reads `data.csv` from the repository folder and writes metrics, a log and figures to `results/`. The original script, `original-2024/BRCA_2024.py`, reads the Kaggle input path and must be run on Kaggle or with that path changed.
+
+Original Kaggle notebook: https://www.kaggle.com/code/shaiksohaik03/brca-multi-omics-model/notebook
 
 ## Thesis reference
 
-*Development of a Machine Learning-Based Diagnostic Tool
-for Early Detection of Breast Cancer using Multi-Omics Data Integration*.
-MSc Bioinformatics project (2024). The anonymized submitted document is
-included as [`thesis.docx`](thesis.docx).
+*Development of a Machine Learning-Based Diagnostic Tool for Early Detection of Breast Cancer using Multi-Omics Data Integration.* MSc Bioinformatics thesis, University of West London (2024).
