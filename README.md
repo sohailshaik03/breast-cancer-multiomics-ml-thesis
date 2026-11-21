@@ -119,7 +119,3 @@ The code (`BRCA.py`, `original-2024/BRCA_2024.py`) is released under the [MIT Li
 ## Thesis reference
 
 *Development of a Machine Learning-Based Diagnostic Tool for Early Detection of Breast Cancer using Multi-Omics Data Integration.* MSc Bioinformatics thesis, University of West London (2024).
-
-## Author
-
-**Sohail Shaik**, MSc Bioinformatics (Distinction), University of West London. More at [sohail-shaik-bioinformatics.vercel.app](https://sohail-shaik-bioinformatics.vercel.app).
