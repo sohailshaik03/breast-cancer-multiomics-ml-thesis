@@ -1,5 +1,9 @@
 # Breast Cancer Multi-Omics Outcome Classification
 
+![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-1.9-orange)
+[![License: MIT](https://img.shields.io/badge/code%20licence-MIT-green)](LICENSE)
+
 MSc Bioinformatics thesis project, University of West London (2024), with a leakage-corrected re-analysis (2026).
 
 > **Research and educational use only.** This is a retrospective machine-learning exercise on a public dataset. It is not a diagnostic or prognostic medical device.
@@ -21,6 +25,7 @@ The re-analysis also showed that high accuracy hides weak performance on the rar
 | `data.csv` | Feature matrix and `vital.status` labels |
 | `thesis.docx` | Thesis document, revised in 2026 to report the corrected re-analysis |
 | `requirements.txt` | Python dependencies |
+| `LICENSE` | MIT licence for the code |
 
 ## Dataset
 
@@ -96,13 +101,25 @@ Python 3.10 or newer.
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
-python BRCA.py
+python BRCA.py | tee results/run.log
 ```
 
-`BRCA.py` reads `data.csv` from the repository folder and writes metrics, a log and figures to `results/`. The original script, `original-2024/BRCA_2024.py`, reads the Kaggle input path and must be run on Kaggle or with that path changed.
+`BRCA.py` reads `data.csv` from the repository folder and writes the metrics table and figures to `results/`. It prints the classification reports and confusion matrices; the `tee` command saves that output as `results/run.log`. The original script, `original-2024/BRCA_2024.py`, reads the Kaggle input path and must be run on Kaggle or with that path changed.
 
 Original Kaggle notebook: https://www.kaggle.com/code/shaiksohaik03/brca-multi-omics-model/notebook
+
+### Reproducibility check
+
+The published `results/` were produced on macOS with Python 3.13 and scikit-learn 1.9. An independent re-run on Linux (Python 3.13.18, scikit-learn 1.9.1, NumPy 2.5.5, pandas 3.1.1, matplotlib 3.11.2, seaborn 0.13.2) reproduced every accuracy, precision, recall, F1 score and confusion matrix exactly. The only difference was the Random Forest ROC-AUC: 0.640 on Linux against 0.656 published. Tree construction is sensitive to tiny floating-point differences between platforms, which shift the predicted probabilities without changing any predicted label.
+
+## Licence
+
+The code (`BRCA.py`, `original-2024/BRCA_2024.py`) is released under the [MIT Licence](LICENSE). `data.csv` is a copy of the public Kaggle dataset `brca-multiomics-tcga`, derived from The Cancer Genome Atlas, and remains under its original terms. The thesis document is the author's own work and is not covered by the code licence.
 
 ## Thesis reference
 
 *Development of a Machine Learning-Based Diagnostic Tool for Early Detection of Breast Cancer using Multi-Omics Data Integration.* MSc Bioinformatics thesis, University of West London (2024).
+
+## Author
+
+**Sohail Shaik**, MSc Bioinformatics (Distinction), University of West London. More at [sohail-shaik-bioinformatics.vercel.app](https://sohail-shaik-bioinformatics.vercel.app).
